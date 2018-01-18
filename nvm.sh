@@ -2822,7 +2822,7 @@ nvm() {
     "use" )
       local PROVIDED_VERSION
       local NVM_USE_SILENT
-      NVM_USE_SILENT=0
+      NVM_USE_SILENT=1 # silent nvm helps with the speed
       local NVM_DELETE_PREFIX
       NVM_DELETE_PREFIX=0
       local NVM_LTS
@@ -2851,7 +2851,8 @@ nvm() {
         nvm_rc_version
         if [ -n "${NVM_RC_VERSION-}" ]; then
           PROVIDED_VERSION="$NVM_RC_VERSION"
-          VERSION="$(nvm_version "$PROVIDED_VERSION")"
+          # this is way too slow
+          VERSION="v$PROVIDED_VERSION"
         fi
         unset NVM_RC_VERSION
       else
@@ -2891,8 +2892,10 @@ nvm() {
         return 3
       # This nvm_ensure_version_installed call can be a performance bottleneck
       # on shell startup. Perhaps we can optimize it away or make it faster.
-      elif ! nvm_ensure_version_installed "${VERSION}"; then
-        return $?
+
+      ##### this is taking too long
+      # elif ! nvm_ensure_version_installed "${VERSION}"; then
+      #   return $?
       fi
 
       local NVM_VERSION_DIR
@@ -2933,9 +2936,10 @@ nvm() {
         if [ $NVM_USE_SILENT -eq 1 ]; then
           NVM_USE_CMD="$NVM_USE_CMD --silent"
         fi
-        if ! nvm_die_on_prefix "$NVM_DELETE_PREFIX" "$NVM_USE_CMD"; then
-          return 11
-        fi
+        ##### Remove this to boost performance
+        # if ! nvm_die_on_prefix "$NVM_DELETE_PREFIX" "$NVM_USE_CMD"; then
+        #   return 11
+        # fi
       fi
       if [ -n "${NVM_USE_OUTPUT-}" ]; then
         nvm_echo "$NVM_USE_OUTPUT"
